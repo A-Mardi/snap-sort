@@ -21,7 +21,6 @@ import { ref } from 'vue';
     <div v-if="photos.length" style="margin-top: 20px;">
       <h3>Test Uploaded Photos:</h3>
       <ul style="list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px;">
-        <!-- Render each photo with its image -->
         <li v-for="(photo, index) in photos" :key="index" style="display: flex; flex-direction: column; align-items: center;">
           <img :src="photo.url" :alt="photo.file.name" style="border: 1px solid #ccc; padding: 5px; width: 150px; height: auto;" />
           <span style="margin-top: 5px; font-size: 0.9em;">{{ photo.file.name }}</span>

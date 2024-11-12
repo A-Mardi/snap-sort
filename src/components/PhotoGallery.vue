@@ -1,10 +1,7 @@
 <script lang="ts" setup>
 import { ref, defineProps, computed } from 'vue';
 
-// Props to receive the selected tags for filtering
 const props = defineProps<{ filterTags: string[] }>();
-
-// Reactive array to store uploaded photos
 const photos = ref<{ file: File; url: string; tags: string[] }[]>([]);
 
 const handleFileInput = (event: Event) => {
@@ -13,7 +10,7 @@ const handleFileInput = (event: Event) => {
     const newPhotos = Array.from(target.files).map((file) => ({
       file,
       url: URL.createObjectURL(file),
-      tags: [], // Initialize tags as an empty array
+      tags: [], 
     }));
     photos.value = [...photos.value, ...newPhotos];
   }
@@ -46,10 +43,9 @@ const filteredPhotos = computed(() => {
 
 <template>
   <div class="min-h-screen p-5 font-mono bg-gray-100">
-    <!-- File upload input -->
+
     <input type="file" multiple @change="handleFileInput" class="block w-full max-w-sm mx-auto mb-5 p-2 border border-gray-300 rounded" />
 
-    <!-- Uploaded Photos Gallery -->
     <div v-if="filteredPhotos.length" class="photo-gallery container mx-auto">
       <h3 class="text-center text-xl font-bold mb-5">Uploaded Photos:</h3>
       <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -81,5 +77,5 @@ const filteredPhotos = computed(() => {
 </template>
 
 <style scoped>
-/* Add minimal styles here or leave styling for Tailwind later */
+
 </style>
