@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { ref, defineProps, computed } from 'vue';
 
+// Props to receive the selected tags for filtering
 const props = defineProps<{ filterTags: string[] }>();
+
+// Reactive array to store uploaded photos
 const photos = ref<{ file: File; url: string; tags: string[] }[]>([]);
 
 const handleFileInput = (event: Event) => {
@@ -10,7 +13,7 @@ const handleFileInput = (event: Event) => {
     const newPhotos = Array.from(target.files).map((file) => ({
       file,
       url: URL.createObjectURL(file),
-      tags: [],
+      tags: [], // Initialize tags as an empty array
     }));
     photos.value = [...photos.value, ...newPhotos];
   }
@@ -33,43 +36,50 @@ const filteredPhotos = computed(() => {
   if (props.filterTags.length === 0) {
     return photos.value;
   }
-  return photos.value.filter(photo => 
-    props.filterTags.some(tag => photo.tags.includes(tag))
+  return photos.value.filter(photo =>
+    props.filterTags.some(tag =>
+      photo.tags.some(photoTag => photoTag.toLowerCase() === tag.toLowerCase())
+    )
   );
 });
 </script>
 
 <template>
-  <div>
-    <input type="file" multiple @change="handleFileInput" />
+  <div class="min-h-screen p-5 font-mono bg-gray-100">
+    <!-- File upload input -->
+    <input type="file" multiple @change="handleFileInput" class="block w-full max-w-sm mx-auto mb-5 p-2 border border-gray-300 rounded" />
 
-    <div v-if="filteredPhotos.length" class="photo-gallery" style="margin-top: 20px;">
-      <h3>Uploaded Photos:</h3>
-      <ul style="list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px;">
-        <li v-for="(photo, index) in filteredPhotos" :key="index" style="display: flex; flex-direction: column; align-items: center;">
-          <img :src="photo.url" :alt="photo.file.name" style="border: 1px solid #ccc; padding: 5px; width: 150px; height: auto;" />
-          <span style="margin-top: 5px; font-size: 0.9em;">{{ photo.file.name }}</span>
-          <button @click="handleDelete(index)" style="margin-top: 10px; padding: 5px 10px; background-color: red; color: white; border: none; cursor: pointer;">
+    <!-- Uploaded Photos Gallery -->
+    <div v-if="filteredPhotos.length" class="photo-gallery container mx-auto">
+      <h3 class="text-center text-xl font-bold mb-5">Uploaded Photos:</h3>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <li v-for="(photo, index) in filteredPhotos" :key="index" class="flex flex-col items-center bg-white p-4 rounded shadow-lg">
+          <img :src="photo.url" :alt="photo.file.name" class="w-full h-auto mb-3 border border-gray-300 rounded" />
+          <span class="text-sm font-bold mb-3">{{ photo.file.name }}</span>
+          <button @click="handleDelete(index)" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
             Delete
           </button>
-          <div class="tagging-component" style="margin-top: 20px;">
-            <h3>Tags for this Photo:</h3>
-            <div>
-              <span v-for="tag in photo.tags" :key="tag" style="margin-right: 10px;">
+          <div class="tagging-component mt-5 w-full text-center">
+            <h4 class="font-bold mb-3">Tags for this Photo:</h4>
+            <div class="flex flex-wrap justify-center mb-2">
+              <span v-for="tag in photo.tags" :key="tag" class="text-xs bg-blue-500 text-white rounded-full px-3 py-1 mr-2 mb-2">
                 {{ tag }}
               </span>
             </div>
-            <input type="text" v-model="newTags[index]" placeholder="Add a tag" />
-            <button @click="addTag(index)" style="margin-left: 5px;">Add Tag</button>
+            <input type="text" v-model="newTags[index]" placeholder="Add a tag" class="block w-full p-2 border border-gray-300 rounded mb-2" />
+            <button @click="addTag(index)" class="mt-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+              Add Tag
+            </button>
           </div>
         </li>
       </ul>
     </div>
-    <div v-else>
+    <div v-else class="text-center mt-10 text-gray-700">
       <p>No photos to display.</p>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* Add minimal styles here or leave styling for Tailwind later */
 </style>
